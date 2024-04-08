@@ -1,11 +1,8 @@
-﻿using Org.BouncyCastle.Bcpg;
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PgpCore.Tests.UnitTests
 {
@@ -16,10 +13,10 @@ namespace PgpCore.Tests.UnitTests
 #else
         public const string VERSION = "BouncyCastle.NET Cryptography (net6.0) v2.4.0+83ebf4a805";
 #endif
-        public const string DEFAULTNAME = "name";
-        public const string TESTNAME = "Test Name";
-        public const string TESTHEADERKEY = "Test Header";
-        public const string TESTHEADERVALUE = "Test Value";
+        public const string Defaultname = "name";
+        public const string Testname = "Test Name";
+        public const string Testheaderkey = "Test Header";
+        public const string Testheadervalue = "Test Value";
 
         public static IEnumerable<object[]> GetCompressionAlgorithimTags()
         {

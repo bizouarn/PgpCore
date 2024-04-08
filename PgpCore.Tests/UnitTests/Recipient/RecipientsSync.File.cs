@@ -1,14 +1,11 @@
 ﻿using FluentAssertions.Execution;
 using FluentAssertions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using System.IO;
 using Org.BouncyCastle.Bcpg.OpenPgp;
-using Org.BouncyCastle.Bcpg;
+using PgpCore.Models;
 
 namespace PgpCore.Tests.UnitTests.Recipient
 {
@@ -23,7 +20,7 @@ namespace PgpCore.Tests.UnitTests.Recipient
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyFileInfo);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             pgpEncrypt.Encrypt(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
@@ -57,7 +54,7 @@ namespace PgpCore.Tests.UnitTests.Recipient
             testFactory1.Arrange(keyType, FileType.Known);
             testFactory2.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(new List<FileInfo>() { testFactory1.PublicKeyFileInfo, testFactory2.PublicKeyFileInfo });
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             pgpEncrypt.Encrypt(testFactory1.ContentFileInfo, testFactory1.EncryptedContentFileInfo);

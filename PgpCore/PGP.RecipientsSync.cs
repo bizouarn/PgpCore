@@ -1,16 +1,14 @@
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using PgpCore.Abstractions;
 using PgpCore.Extensions;
-using PgpCore.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace PgpCore
 {
-    public partial class PGP : IRecipientsSync
+    public partial class Pgp : IRecipientsSync
     {
         #region GetFileRecipients
 
@@ -28,7 +26,9 @@ namespace PgpCore
                 throw new FileNotFoundException($"Encrypted File [{inputFileInfo.FullName}] not found.");
 
             using (Stream inputStream = File.OpenRead(inputFileInfo.FullName))
+            {
                 return GetRecipients(inputStream);
+            }
         }
 
         /// <summary>
@@ -41,9 +41,9 @@ namespace PgpCore
             if (inputStream == null)
                 throw new ArgumentException("InputStream");
 
-            PgpObjectFactory objFactory = new PgpObjectFactory(PgpUtilities.GetDecoderStream(inputStream));
+            var objFactory = new PgpObjectFactory(PgpUtilities.GetDecoderStream(inputStream));
 
-            PgpObject obj = objFactory.NextPgpObject();
+            var obj = objFactory.NextPgpObject();
 
             // the first object might be a PGP marker packet.
             PgpEncryptedDataList enc;
@@ -51,7 +51,7 @@ namespace PgpCore
             if (obj is PgpEncryptedDataList list)
                 enc = list;
             else
-                enc = (PgpEncryptedDataList)objFactory.NextPgpObject();
+                enc = (PgpEncryptedDataList) objFactory.NextPgpObject();
 
             // If enc is null at this point, we failed to detect the contents of the encrypted stream.
             if (enc == null)
@@ -71,15 +71,26 @@ namespace PgpCore
             if (string.IsNullOrEmpty(input))
                 throw new ArgumentException("Input");
 
-            using (Stream inputStream = input.GetStream())
+            using (var inputStream = input.GetStream())
+            {
                 return GetRecipients(inputStream);
+            }
         }
 
-        public IEnumerable<long> GetFileRecipients(FileInfo inputFileInfo) => GetRecipients(inputFileInfo);
+        public IEnumerable<long> GetFileRecipients(FileInfo inputFileInfo)
+        {
+            return GetRecipients(inputFileInfo);
+        }
 
-        public IEnumerable<long> GetStreamRecipients(Stream inputStream) => GetRecipients(inputStream);
+        public IEnumerable<long> GetStreamRecipients(Stream inputStream)
+        {
+            return GetRecipients(inputStream);
+        }
 
-        public IEnumerable<long> GetArmoredStringRecipients(string input) => GetRecipients(input);
+        public IEnumerable<long> GetArmoredStringRecipients(string input)
+        {
+            return GetRecipients(input);
+        }
 
         #endregion GetArmoredStringRecipients
     }

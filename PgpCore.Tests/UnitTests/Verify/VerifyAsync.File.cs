@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using System.IO;
+using PgpCore.Models;
 
 namespace PgpCore.Tests.UnitTests.Verify
 {
@@ -20,8 +21,8 @@ namespace PgpCore.Tests.UnitTests.Verify
             await testFactory.ArrangeAsync(keyType, FileType.Known);
             EncryptionKeys signingKeys = new EncryptionKeys(testFactory.PrivateKeyFileInfo, testFactory.Password);
             EncryptionKeys verificationKeys = new EncryptionKeys(testFactory.PublicKeyFileInfo);
-            PGP pgpSign = new PGP(signingKeys);
-            PGP pgpVerify = new PGP(verificationKeys);
+            Pgp pgpSign = new Pgp(signingKeys);
+            Pgp pgpVerify = new Pgp(verificationKeys);
 
             // Act
             await pgpSign.SignAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
@@ -48,8 +49,8 @@ namespace PgpCore.Tests.UnitTests.Verify
             await testFactory.ArrangeAsync(keyType, FileType.Known);
             EncryptionKeys signingKeys = new EncryptionKeys(testFactory.PrivateKeyFileInfo, testFactory.Password);
             EncryptionKeys verificationKeys = new EncryptionKeys(testFactory.PublicKeyFileInfo);
-            PGP pgpSign = new PGP(signingKeys);
-            PGP pgpVerify = new PGP(verificationKeys);
+            Pgp pgpSign = new Pgp(signingKeys);
+            Pgp pgpVerify = new Pgp(verificationKeys);
 
             // Act
             await pgpSign.SignAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
@@ -80,8 +81,8 @@ namespace PgpCore.Tests.UnitTests.Verify
             await testFactory2.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys signingKeys = new EncryptionKeys(testFactory1.PrivateKeyFileInfo, testFactory1.Password);
             EncryptionKeys verificationKeys = new EncryptionKeys(testFactory2.PublicKeyFileInfo);
-            PGP pgpSign = new PGP(signingKeys);
-            PGP pgpVerify = new PGP(verificationKeys);
+            Pgp pgpSign = new Pgp(signingKeys);
+            Pgp pgpVerify = new Pgp(verificationKeys);
 
             // Act
             await pgpSign.SignAsync(testFactory1.ContentFileInfo, testFactory1.EncryptedContentFileInfo);
@@ -109,8 +110,8 @@ namespace PgpCore.Tests.UnitTests.Verify
             await testFactory.ArrangeAsync(keyType, FileType.Known);
             EncryptionKeys signingKeys = new EncryptionKeys(testFactory.PrivateKeyFileInfo, testFactory.Password);
             EncryptionKeys verificationKeys = new EncryptionKeys(testFactory.PublicKeyFileInfo);
-            PGP pgpSign = new PGP(signingKeys);
-            PGP pgpVerify = new PGP(verificationKeys);
+            Pgp pgpSign = new Pgp(signingKeys);
+            Pgp pgpVerify = new Pgp(verificationKeys);
 
             // Act
             await pgpSign.ClearSignAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
@@ -137,8 +138,8 @@ namespace PgpCore.Tests.UnitTests.Verify
             await testFactory.ArrangeAsync(keyType, FileType.Known);
             EncryptionKeys signingKeys = new EncryptionKeys(testFactory.PrivateKeyFileInfo, testFactory.Password);
             EncryptionKeys verificationKeys = new EncryptionKeys(testFactory.PublicKeyFileInfo);
-            PGP pgpSign = new PGP(signingKeys);
-            PGP pgpVerify = new PGP(verificationKeys);
+            Pgp pgpSign = new Pgp(signingKeys);
+            Pgp pgpVerify = new Pgp(verificationKeys);
 
             // Act
             await pgpSign.ClearSignAsync(testFactory.ContentFileInfo, testFactory.EncryptedContentFileInfo);
@@ -170,8 +171,8 @@ namespace PgpCore.Tests.UnitTests.Verify
             await testFactory2.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys signingKeys = new EncryptionKeys(testFactory1.PrivateKeyFileInfo, testFactory1.Password);
             EncryptionKeys verificationKeys = new EncryptionKeys(testFactory2.PublicKeyFileInfo);
-            PGP pgpSign = new PGP(signingKeys);
-            PGP pgpVerify = new PGP(verificationKeys);
+            Pgp pgpSign = new Pgp(signingKeys);
+            Pgp pgpVerify = new Pgp(verificationKeys);
 
             // Act
             await pgpSign.ClearSignAsync(testFactory1.ContentFileInfo, testFactory1.EncryptedContentFileInfo);
@@ -202,8 +203,8 @@ namespace PgpCore.Tests.UnitTests.Verify
             await testFactory2.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys signingKeys = new EncryptionKeys(testFactory1.PrivateKeyFileInfo, testFactory1.Password);
             EncryptionKeys verificationKeys = new EncryptionKeys(testFactory2.PublicKeyFileInfo);
-            PGP pgpSign = new PGP(signingKeys);
-            PGP pgpVerify = new PGP(verificationKeys);
+            Pgp pgpSign = new Pgp(signingKeys);
+            Pgp pgpVerify = new Pgp(verificationKeys);
 
             // Act
             await pgpSign.ClearSignAsync(testFactory1.ContentFileInfo, testFactory1.EncryptedContentFileInfo);

@@ -1,6 +1,4 @@
-using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
-using Org.BouncyCastle.Utilities.Zlib;
 using PgpCore.Abstractions;
 using PgpCore.Extensions;
 using PgpCore.Models;
@@ -11,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PgpCore
 {
-    public partial class PGP : IInspectAsync
+    public partial class Pgp : IInspectAsync
     {
         /// <summary>
         /// Inspect an arbitrary PGP message returning information about the message
@@ -27,19 +25,19 @@ namespace PgpCore
             if (inputStream.Position != 0)
                 throw new ArgumentException("inputStream should be at start of stream");
 
-            bool isArmored = await IsArmoredAsync(inputStream);
+            var isArmored = await IsArmoredAsync(inputStream);
             Dictionary<string, string> messageHeaders = null;
-            
+
             if (isArmored)
                 messageHeaders = await GetMessageHeadersAsync(inputStream);
 
-            PgpInspectBaseResult pgpInspectBaseResult = GetPgpInspectBaseResult(inputStream);
+            var pgpInspectBaseResult = GetPgpInspectBaseResult(inputStream);
 
             return new PgpInspectResult(
                 pgpInspectBaseResult,
                 isArmored,
                 messageHeaders
-                );
+            );
         }
 
         /// <summary>
@@ -56,8 +54,10 @@ namespace PgpCore
             if (!inputFile.Exists)
                 throw new FileNotFoundException($"Input file [{inputFile.FullName}] does not exist.");
 
-            using (FileStream inputStream = inputFile.OpenRead())
+            using (var inputStream = inputFile.OpenRead())
+            {
                 return await InspectAsync(inputStream);
+            }
         }
 
         /// <summary>
@@ -72,39 +72,36 @@ namespace PgpCore
             if (string.IsNullOrEmpty(input))
                 throw new ArgumentException("Input");
 
-            using (Stream inputStream = await input.GetStreamAsync())
+            using (var inputStream = await input.GetStreamAsync())
             {
                 return await InspectAsync(inputStream);
             }
         }
 
-        private async Task<bool> IsArmoredAsync(Stream stream)
+        private static async Task<bool> IsArmoredAsync(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] headerBytes = new byte[26];
+            var headerBytes = new byte[26];
             await stream.ReadAsync(headerBytes, 0, 26);
             return IsArmored(headerBytes);
         }
 
-        private async Task<Dictionary<string, string>> GetMessageHeadersAsync(Stream inputStream)
+        private static async Task<Dictionary<string, string>> GetMessageHeadersAsync(Stream inputStream)
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
+            var headers = new Dictionary<string, string>();
 
-            StreamReader reader = new StreamReader(inputStream);
+            var reader = new StreamReader(inputStream);
             string line;
 
             while ((line = await reader.ReadLineAsync()) != null)
             {
-                if (line.StartsWith("-----"))
-                {
-                    break;
-                }
+                if (line.StartsWith("-----")) break;
 
-                int colonIndex = line.IndexOf(':');
+                var colonIndex = line.IndexOf(':');
                 if (colonIndex != -1)
                 {
-                    string key = line.Substring(0, colonIndex).Trim();
-                    string value = line.Substring(colonIndex + 1).Trim();
+                    var key = line.Substring(0, colonIndex).Trim();
+                    var value = line.Substring(colonIndex + 1).Trim();
                     headers[key] = value;
                 }
             }

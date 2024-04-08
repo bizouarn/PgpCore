@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PgpCore.Tests
+﻿namespace PgpCore.Tests
 {
     public static class Constants
     {
         // Known keys, generated using https://pgpkeygen.com/
-        public const string PUBLICKEY1 = @"-----BEGIN PGP PUBLIC KEY BLOCK-----
+        public const string Publickey1 = @"-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: Keybase OpenPGP v1.0.0
 Comment: https://keybase.io/crypto
 
@@ -41,7 +37,7 @@ b8xSWNM02DrVx932kcSOx4k8BaZ0IiSwzny4xZEoOIPKK8SZ+EZeZaeopZ7h
 =O3ub
 -----END PGP PUBLIC KEY BLOCK-----";
 
-        public const string PUBLICKEY2 = @"-----BEGIN PGP PUBLIC KEY BLOCK-----
+        public const string Publickey2 = @"-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: Keybase OpenPGP v1.0.0
 Comment: https://keybase.io/crypto
 
@@ -75,7 +71,7 @@ iSJGzF6qhiiorxaJkMNx7xDgxQFZgHiihjIsolKego98NLI8e9j7+6zOHR0f
 =lgvU
 -----END PGP PUBLIC KEY BLOCK-----";
 
-        public const string PRIVATEKEY1 = @"-----BEGIN PGP PRIVATE KEY BLOCK-----
+        public const string Privatekey1 = @"-----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: Keybase OpenPGP v1.0.0
 Comment: https://keybase.io/crypto
 
@@ -133,7 +129,7 @@ BaZ0IiSwzny4xZEoOIPKK8SZ+EZeZaeopZ7h
 =i6tW
 -----END PGP PRIVATE KEY BLOCK-----";
 
-        public const string PRIVATEKEY2 = @"-----BEGIN PGP PRIVATE KEY BLOCK-----
+        public const string Privatekey2 = @"-----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: Keybase OpenPGP v1.0.0
 Comment: https://keybase.io/crypto
 
@@ -191,7 +187,7 @@ AVmAeKKGMiyiUp6Cj3w0sjx72Pv7rM4dHR8=
 =dUJo
 -----END PGP PRIVATE KEY BLOCK-----";
 
-        public const string PUBLICGPGKEY1 = @"-----BEGIN PGP PUBLIC KEY BLOCK-----
+        public const string Publicgpgkey1 = @"-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQENBF757qEBCADD5rzakxbG3hjPN3jGuqHuwSzPBPJwDcWMACFXhou37+qet2JM
 V3sk77vylvMU0egA5ag57KPDmQr2SSehpQ4tophd0Gi9Ut9nfy4xMdcO0oaId5wo
@@ -222,7 +218,7 @@ KouLiF6zJ1bwxlnNeabP/z+Lm8K4V328
 =nm1p
 -----END PGP PUBLIC KEY BLOCK-----";
 
-        public const string PUBLICGPGKEY2 = @"-----BEGIN PGP PUBLIC KEY BLOCK-----
+        public const string Publicgpgkey2 = @"-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQENBF04J+YBCADdpMrZ2j2rzwWAU+b8d6CUpE+W7IpY/0/ZZjD6yinyiHou7T56
 PUbr1vA0E+GjNM+iLhG4BdxJhkU3F1HJ2j6kFHP2iupkVYFs0jGEtO0wHpFpyrun
@@ -253,7 +249,7 @@ pCNCbkyRFW+kY0x8hZKez3AsiXtDSiDG9WD1NbrUvEAxaf2MkSU=
 =LNCL
 -----END PGP PUBLIC KEY BLOCK-----";
 
-        public const string PRIVATEGPGKEY1 = @"-----BEGIN PGP PRIVATE KEY BLOCK-----
+        public const string Privategpgkey1 = @"-----BEGIN PGP PRIVATE KEY BLOCK-----
 
 lQPGBF757qEBCADD5rzakxbG3hjPN3jGuqHuwSzPBPJwDcWMACFXhou37+qet2JM
 V3sk77vylvMU0egA5ag57KPDmQr2SSehpQ4tophd0Gi9Ut9nfy4xMdcO0oaId5wo
@@ -313,7 +309,7 @@ m2sqi4uIXrMnVvDGWc15ps//P4ubwrhXfbw=
 =drdt
 -----END PGP PRIVATE KEY BLOCK-----";
 
-        public const string PRIVATEGPGKEY2 = @"-----BEGIN PGP PRIVATE KEY BLOCK-----
+        public const string Privategpgkey2 = @"-----BEGIN PGP PRIVATE KEY BLOCK-----
 
 lQPGBF04J+YBCADdpMrZ2j2rzwWAU+b8d6CUpE+W7IpY/0/ZZjD6yinyiHou7T56
 PUbr1vA0E+GjNM+iLhG4BdxJhkU3F1HJ2j6kFHP2iupkVYFs0jGEtO0wHpFpyrun
@@ -373,7 +369,7 @@ kz2kI0JuTJEVb6RjTHyFkp7PcCyJe0NKIMb1YPU1utS8QDFp/YyRJQ==
 =tfnh
 -----END PGP PRIVATE KEY BLOCK-----";
 
-        public const string ENCRYPTEDCONTENT1 = @"-----BEGIN PGP MESSAGE-----
+        public const string Encryptedcontent1 = @"-----BEGIN PGP MESSAGE-----
 Version: OpenPGP.js v3.0.9
 Comment: https://openpgpjs.org
 
@@ -389,7 +385,7 @@ sZg/AsVo3z+/sr7a
 =4Wwg
 -----END PGP MESSAGE-----";
 
-        public const string ENCRYPTEDCONTENT2 = @"-----BEGIN PGP MESSAGE-----
+        public const string Encryptedcontent2 = @"-----BEGIN PGP MESSAGE-----
 Version: OpenPGP.js v3.0.9
 Comment: https://openpgpjs.org
 
@@ -405,18 +401,18 @@ MFHwXEtblMhDz7ni
 =navA
 -----END PGP MESSAGE-----";
 
-        public const string USERNAME1 = "email1@email.com";
-        public const string USERNAME2 = "email2@email.com";
-        public const string PASSWORD1 = "password1";
-        public const string PASSWORD2 = "password2";
-        public const string CONTENTBASEDIRECTORY = "./Content/";
-        public const string KEYBASEDIRECTORY = "./Keys/";
-        public const string CONTENT = "The quick brown fox jumps over the lazy dog";
-        public const string CONTENTFILENAME = "content.txt";
-        public const string ENCRYPTEDCONTENTFILENAME = "encryptedContent.pgp";
-        public const string SIGNEDCONTENTFILENAME = "signedContent.pgp";
-        public const string DECRYPTEDCONTENTFILENAME = "decryptedContent.txt";
-        public const string PRIVATEKEYFILENAME = "privateKey.asc";
-        public const string PUBLICKEYFILENAME = "publicKey.asc";
+        public const string Username1 = "email1@email.com";
+        public const string Username2 = "email2@email.com";
+        public const string Password1 = "password1";
+        public const string Password2 = "password2";
+        public const string Contentbasedirectory = "./Content/";
+        public const string Keybasedirectory = "./Keys/";
+        public const string Content = "The quick brown fox jumps over the lazy dog";
+        public const string Contentfilename = "content.txt";
+        public const string Encryptedcontentfilename = "encryptedContent.pgp";
+        public const string Signedcontentfilename = "signedContent.pgp";
+        public const string Decryptedcontentfilename = "decryptedContent.txt";
+        public const string Privatekeyfilename = "privateKey.asc";
+        public const string Publickeyfilename = "publicKey.asc";
     }
 }

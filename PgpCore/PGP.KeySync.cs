@@ -12,7 +12,7 @@ using Org.BouncyCastle.Math;
 
 namespace PgpCore
 {
-    public partial class PGP : IKeySync
+    public partial class Pgp : IKeySync
     {
         public void GenerateKey(
             FileInfo publicKeyFileInfo,
@@ -36,9 +36,11 @@ namespace PgpCore
 
             using (Stream pubs = publicKeyFileInfo.Create())
             using (Stream pris = privateKeyFileInfo.Create())
+            {
                 GenerateKey(pubs, pris, username, password, strength, certainty, armor, emitVersion,
                     keyExpirationInSeconds, signatureExpirationInSeconds,
                     preferredCompressionAlgorithms, preferredHashAlgorithmTags, preferredSymetricKeyAlgorithms);
+            }
         }
 
         public void GenerateKey(
@@ -60,57 +62,63 @@ namespace PgpCore
             password = password ?? string.Empty;
 
             preferredCompressionAlgorithms = preferredCompressionAlgorithms ??
-                ((CompressionAlgorithm != CompressionAlgorithmTag.Zip && CompressionAlgorithm != CompressionAlgorithmTag.Uncompressed) ?
-                new[]
-                {
-                    CompressionAlgorithm,
-                    CompressionAlgorithmTag.Zip,
-                    CompressionAlgorithmTag.Uncompressed,
-                } :
-                new[]
-                {
-                    CompressionAlgorithmTag.Zip,
-                    CompressionAlgorithmTag.Uncompressed,
-                });
+                                             (CompressionAlgorithm != CompressionAlgorithmTag.Zip &&
+                                              CompressionAlgorithm != CompressionAlgorithmTag.Uncompressed
+                                                 ? new[]
+                                                 {
+                                                     CompressionAlgorithm,
+                                                     CompressionAlgorithmTag.Zip,
+                                                     CompressionAlgorithmTag.Uncompressed
+                                                 }
+                                                 : new[]
+                                                 {
+                                                     CompressionAlgorithmTag.Zip,
+                                                     CompressionAlgorithmTag.Uncompressed
+                                                 });
 
             preferredHashAlgorithmTags = preferredHashAlgorithmTags ??
-                (HashAlgorithmTag == HashAlgorithmTag.Sha1 ?
-                new[]
-                {
-                    HashAlgorithmTag
-                } :
-                new[]
-                {
-                    HashAlgorithmTag, HashAlgorithmTag.Sha1
-                });
+                                         (HashAlgorithmTag == HashAlgorithmTag.Sha1
+                                             ? new[]
+                                             {
+                                                 HashAlgorithmTag
+                                             }
+                                             : new[]
+                                             {
+                                                 HashAlgorithmTag, HashAlgorithmTag.Sha1
+                                             });
 
             preferredSymetricKeyAlgorithms = preferredSymetricKeyAlgorithms ??
-                (SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.TripleDes ?
-                new[]
-                {
-                    SymmetricKeyAlgorithm
-                } :
-                new[]
-                {
-                    SymmetricKeyAlgorithm, SymmetricKeyAlgorithmTag.TripleDes
-                });
+                                             (SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.TripleDes
+                                                 ? new[]
+                                                 {
+                                                     SymmetricKeyAlgorithm
+                                                 }
+                                                 : new[]
+                                                 {
+                                                     SymmetricKeyAlgorithm, SymmetricKeyAlgorithmTag.TripleDes
+                                                 });
 
             IAsymmetricCipherKeyPairGenerator kpg = new RsaKeyPairGenerator();
 
             kpg.Init(new RsaKeyGenerationParameters(BigInteger.ValueOf(0x13), new SecureRandom(), strength, certainty));
 
-            PgpKeyPair masterKey = new PgpKeyPair(PublicKeyAlgorithm, kpg.GenerateKeyPair(), DateTime.UtcNow);
+            var masterKey = new PgpKeyPair(PublicKeyAlgorithm, kpg.GenerateKeyPair(), DateTime.UtcNow);
 
-            PgpSignatureSubpacketGenerator signHashGen = new PgpSignatureSubpacketGenerator();
-            signHashGen.SetKeyFlags(false, PgpKeyFlags.CanCertify | PgpKeyFlags.CanEncryptCommunications | PgpKeyFlags.CanEncryptStorage | PgpKeyFlags.CanSign);
-            signHashGen.SetPreferredCompressionAlgorithms(false, Array.ConvertAll(preferredCompressionAlgorithms, item => (int)item));
-            signHashGen.SetPreferredHashAlgorithms(false, Array.ConvertAll(preferredHashAlgorithmTags, item => (int)item));
-            signHashGen.SetPreferredSymmetricAlgorithms(false, Array.ConvertAll(preferredSymetricKeyAlgorithms, item => (int)item));
+            var signHashGen = new PgpSignatureSubpacketGenerator();
+            signHashGen.SetKeyFlags(false,
+                PgpKeyFlags.CanCertify | PgpKeyFlags.CanEncryptCommunications | PgpKeyFlags.CanEncryptStorage |
+                PgpKeyFlags.CanSign);
+            signHashGen.SetPreferredCompressionAlgorithms(false,
+                Array.ConvertAll(preferredCompressionAlgorithms, item => (int) item));
+            signHashGen.SetPreferredHashAlgorithms(false,
+                Array.ConvertAll(preferredHashAlgorithmTags, item => (int) item));
+            signHashGen.SetPreferredSymmetricAlgorithms(false,
+                Array.ConvertAll(preferredSymetricKeyAlgorithms, item => (int) item));
             signHashGen.SetFeature(false, Features.FEATURE_MODIFICATION_DETECTION);
             signHashGen.SetKeyExpirationTime(false, keyExpirationInSeconds);
             signHashGen.SetSignatureExpirationTime(false, signatureExpirationInSeconds);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(
+            var keyRingGen = new PgpKeyRingGenerator(
                 PgpSignatureType,
                 masterKey,
                 username,
@@ -121,7 +129,7 @@ namespace PgpCore
                 null,
                 new SecureRandom());
 
-            PgpSecretKeyRing secretKeyRing = keyRingGen.GenerateSecretKeyRing();
+            var secretKeyRing = keyRingGen.GenerateSecretKeyRing();
 
             ExportKeyPair(privateKeyStream, publicKeyStream, secretKeyRing.GetSecretKey(), armor, emitVersion);
         }

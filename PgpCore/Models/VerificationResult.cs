@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PgpCore.Models
+﻿namespace PgpCore.Models
 {
     public struct VerificationResult
     {

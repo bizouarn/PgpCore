@@ -20,7 +20,7 @@ namespace PgpCore.Models
 
         public void Dispose()
         {
-            while (_disposables.TryDequeue(out IDisposable disposable))
+            while (_disposables.TryDequeue(out var disposable))
                 disposable.Dispose();
         }
     }

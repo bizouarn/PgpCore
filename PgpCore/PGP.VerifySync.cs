@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace PgpCore
 {
-    public partial class PGP : IVerifySync
+    public partial class Pgp : IVerifySync
     {
         #region Verify
 
@@ -31,20 +31,16 @@ namespace PgpCore
                 throw new FileNotFoundException($"Encrypted File [{inputFile.FullName}] not found.");
 
             if (outputFile == null)
-            {
                 using (Stream inputStream = inputFile.OpenRead())
                 {
                     return Verify(inputStream, null, throwIfEncrypted);
                 }
-            }
             else
-            {
                 using (Stream inputStream = inputFile.OpenRead())
                 using (Stream outputStream = outputFile.OpenWrite())
                 {
                     return Verify(inputStream, outputStream, throwIfEncrypted);
                 }
-            }
         }
 
         /// <summary>
@@ -55,110 +51,114 @@ namespace PgpCore
         /// <param name="throwIfEncrypted">Throw if inputStream contains encrypted data. Otherwise, verify encryption key.</param>
         public bool Verify(Stream inputStream, Stream outputStream = null, bool throwIfEncrypted = false)
         {
-            bool verified = false;
+            var verified = false;
 
             // If no output stream provided just write to memory stream and discard
             if (outputStream == null)
                 outputStream = new MemoryStream();
 
             inputStream.Seek(0, SeekOrigin.Begin);
-            Stream encodedFile = PgpUtilities.GetDecoderStream(inputStream);
-            PgpObjectFactory factory = new PgpObjectFactory(encodedFile);
-            PgpObject pgpObject = factory.NextPgpObject();
-            if (pgpObject is PgpCompressedData)
+            var encodedFile = PgpUtilities.GetDecoderStream(inputStream);
+            var factory = new PgpObjectFactory(encodedFile);
+            var pgpObject = factory.NextPgpObject();
+            switch (pgpObject)
             {
-                PgpPublicKeyEncryptedData publicKeyEncryptedData = Utilities.ExtractPublicKeyEncryptedData(encodedFile);
-
-                // Verify against public key ID and that of any sub keys
-                var keyIdToVerify = publicKeyEncryptedData.KeyId;
-                verified = Utilities.FindPublicKey(keyIdToVerify, EncryptionKeys.VerificationKeys,
-                    out PgpPublicKey _);
-            }
-            else if (pgpObject is PgpEncryptedDataList dataList)
-            {
-                if (throwIfEncrypted)
+                case PgpCompressedData _:
                 {
-                    throw new ArgumentException("Input is encrypted. Decrypt the input first.");
+                    var publicKeyEncryptedData = Utilities.ExtractPublicKeyEncryptedData(encodedFile);
+
+                    // Verify against public key ID and that of any sub keys
+                    var keyIdToVerify = publicKeyEncryptedData.KeyId;
+                    verified = Utilities.FindPublicKey(keyIdToVerify, EncryptionKeys.VerificationKeys,
+                        out _);
+                    break;
                 }
-                PgpPublicKeyEncryptedData publicKeyEncryptedData = Utilities.ExtractPublicKey(dataList);
-                var keyIdToVerify = publicKeyEncryptedData.KeyId;
-                // If we encounter an encrypted packet, verify with the encryption keys used instead
-                // TODO does this even make sense? maybe throw exception instead, or try to decrypt first
-                verified = Utilities.FindPublicKeyInKeyRings(keyIdToVerify, EncryptionKeys.PublicKeyRings.Select(keyRing => keyRing.PgpPublicKeyRing), out PgpPublicKey _);
-            }
-            else if (pgpObject is PgpOnePassSignatureList onePassSignatureList)
-            {
-                PgpOnePassSignature pgpOnePassSignature = onePassSignatureList[0];
-                PgpLiteralData pgpLiteralData = (PgpLiteralData)factory.NextPgpObject();
-                Stream pgpLiteralStream = pgpLiteralData.GetInputStream();
-
-                // Verify against public key ID and that of any sub keys
-                var keyIdToVerify = pgpOnePassSignature.KeyId;
-                if (Utilities.FindPublicKey(keyIdToVerify, EncryptionKeys.VerificationKeys,
-                        out PgpPublicKey validationKey))
+                case PgpEncryptedDataList dataList when throwIfEncrypted:
+                    throw new ArgumentException("Input is encrypted. Decrypt the input first.");
+                case PgpEncryptedDataList dataList:
                 {
-                    pgpOnePassSignature.InitVerify(validationKey);
+                    var publicKeyEncryptedData = Utilities.ExtractPublicKey(dataList);
+                    var keyIdToVerify = publicKeyEncryptedData.KeyId;
+                    // If we encounter an encrypted packet, verify with the encryption keys used instead
+                    // TODO does this even make sense? maybe throw exception instead, or try to decrypt first
+                    verified = Utilities.FindPublicKeyInKeyRings(keyIdToVerify,
+                        EncryptionKeys.PublicKeyRings.Select(keyRing => keyRing.PgpPublicKeyRing), out _);
+                    break;
+                }
+                case PgpOnePassSignatureList onePassSignatureList:
+                {
+                    var pgpOnePassSignature = onePassSignatureList[0];
+                    var pgpLiteralData = (PgpLiteralData) factory.NextPgpObject();
+                    var pgpLiteralStream = pgpLiteralData.GetInputStream();
 
-                    int ch;
-                    while ((ch = pgpLiteralStream.ReadByte()) >= 0)
+                    // Verify against public key ID and that of any sub keys
+                    var keyIdToVerify = pgpOnePassSignature.KeyId;
+                    if (Utilities.FindPublicKey(keyIdToVerify, EncryptionKeys.VerificationKeys,
+                            out var validationKey))
                     {
-                        pgpOnePassSignature.Update((byte)ch);
-                        outputStream.WriteByte((byte)ch);
-                    }
+                        pgpOnePassSignature.InitVerify(validationKey);
 
-                    PgpSignatureList pgpSignatureList = (PgpSignatureList)factory.NextPgpObject();
-
-                    for (int i = 0; i < pgpSignatureList.Count; i++)
-                    {
-                        PgpSignature pgpSignature = pgpSignatureList[i];
-
-                        if (pgpOnePassSignature.Verify(pgpSignature))
+                        int ch;
+                        while ((ch = pgpLiteralStream.ReadByte()) >= 0)
                         {
-                            verified = true;
-                            break;
+                            pgpOnePassSignature.Update((byte) ch);
+                            outputStream.WriteByte((byte) ch);
+                        }
+
+                        var pgpSignatureList = (PgpSignatureList) factory.NextPgpObject();
+
+                        for (var i = 0; i < pgpSignatureList.Count; i++)
+                        {
+                            var pgpSignature = pgpSignatureList[i];
+
+                            if (pgpOnePassSignature.Verify(pgpSignature))
+                            {
+                                verified = true;
+                                break;
+                            }
                         }
                     }
+
+                    break;
                 }
-            }
-            else if (pgpObject is PgpSignatureList signatureList)
-            {
-                PgpSignature pgpSignature = signatureList[0];
-                PgpLiteralData pgpLiteralData = (PgpLiteralData)factory.NextPgpObject();
-                Stream pgpLiteralStream = pgpLiteralData.GetInputStream();
-
-                // Verify against public key ID and that of any sub keys
-                if (Utilities.FindPublicKey(pgpSignature.KeyId, EncryptionKeys.VerificationKeys,
-                        out PgpPublicKey publicKey))
+                case PgpSignatureList signatureList:
                 {
-                    foreach (PgpSignature _ in publicKey.GetSignatures())
-                    {
-                        if (!verified)
-                        {
-                            pgpSignature.InitVerify(publicKey);
+                    var pgpSignature = signatureList[0];
+                    var pgpLiteralData = (PgpLiteralData) factory.NextPgpObject();
+                    var pgpLiteralStream = pgpLiteralData.GetInputStream();
 
-                            int ch;
-                            while ((ch = pgpLiteralStream.ReadByte()) >= 0)
+                    // Verify against public key ID and that of any sub keys
+                    if (Utilities.FindPublicKey(pgpSignature.KeyId, EncryptionKeys.VerificationKeys,
+                            out var publicKey))
+                        foreach (var _ in publicKey.GetSignatures())
+                            if (!verified)
                             {
-                                pgpSignature.Update((byte)ch);
-                                outputStream.WriteByte((byte)ch);
+                                pgpSignature.InitVerify(publicKey);
+
+                                int ch;
+                                while ((ch = pgpLiteralStream.ReadByte()) >= 0)
+                                {
+                                    pgpSignature.Update((byte) ch);
+                                    outputStream.WriteByte((byte) ch);
+                                }
+
+                                verified = pgpSignature.Verify();
+                            }
+                            else
+                            {
+                                break;
                             }
 
-                            verified = pgpSignature.Verify();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+                    break;
                 }
+                default:
+                    throw new PgpException("Message is not a encrypted and signed file or simple signed file.");
             }
-            else
-                throw new PgpException("Message is not a encrypted and signed file or simple signed file.");
 
             outputStream.Flush();
             outputStream.Seek(0, SeekOrigin.Begin);
 
-            return (verified);
+            return verified;
         }
 
         /// <summary>
@@ -168,29 +168,40 @@ namespace PgpCore
         /// <param name="throwIfEncrypted">Throw if inputStream contains encrypted data. Otherwise, verify encryption key.</param>
         public bool Verify(string input, bool throwIfEncrypted = false)
         {
-            using (Stream inputStream = input.GetStream())
+            using (var inputStream = input.GetStream())
             {
                 return Verify(inputStream, null, throwIfEncrypted);
             }
         }
 
-        public bool VerifyFile(FileInfo inputFile, bool throwIfEncrypted = false) => Verify(inputFile, null, throwIfEncrypted);
+        public bool VerifyFile(FileInfo inputFile, bool throwIfEncrypted = false)
+        {
+            return Verify(inputFile, null, throwIfEncrypted);
+        }
 
-        public bool VerifyStream(Stream inputStream, bool throwIfEncrypted = false) => Verify(inputStream, null, throwIfEncrypted);
+        public bool VerifyStream(Stream inputStream, bool throwIfEncrypted = false)
+        {
+            return Verify(inputStream, null, throwIfEncrypted);
+        }
 
-        public bool VerifyArmoredString(string input, bool throwIfEncrypted = false) => Verify(input, throwIfEncrypted);
+        public bool VerifyArmoredString(string input, bool throwIfEncrypted = false)
+        {
+            return Verify(input, throwIfEncrypted);
+        }
 
         public VerificationResult VerifyAndReadSignedFile(FileInfo inputFile, bool throwIfEncrypted = false)
         {
             using (Stream inputStream = inputFile.OpenRead())
+            {
                 return VerifyAndReadSignedStream(inputStream, throwIfEncrypted);
+            }
         }
 
         public VerificationResult VerifyAndReadSignedStream(Stream inputStream, bool throwIfEncrypted = false)
         {
             using (Stream outputStream = new MemoryStream())
             {
-                bool verified = Verify(inputStream, outputStream, throwIfEncrypted);
+                var verified = Verify(inputStream, outputStream, throwIfEncrypted);
 
                 return new VerificationResult(verified, outputStream.GetString());
             }
@@ -198,8 +209,10 @@ namespace PgpCore
 
         public VerificationResult VerifyAndReadSignedArmoredString(string input, bool throwIfEncrypted = false)
         {
-            using (Stream inputStream = input.GetStream())
+            using (var inputStream = input.GetStream())
+            {
                 return VerifyAndReadSignedStream(inputStream, throwIfEncrypted);
+            }
         }
 
         #endregion Verify
@@ -219,20 +232,16 @@ namespace PgpCore
                 throw new ArgumentNullException(nameof(EncryptionKeys), "Verification Key not found.");
 
             if (outputFile == null)
-            {
                 using (Stream inputStream = inputFile.OpenRead())
                 {
-                    return VerifyClear(inputStream, null);
+                    return VerifyClear(inputStream);
                 }
-            }
             else
-            {
                 using (Stream inputStream = inputFile.OpenRead())
                 using (Stream outputStream = outputFile.OpenWrite())
                 {
                     return VerifyClear(inputStream, outputStream);
                 }
-            }
         }
 
         /// <summary>
@@ -252,18 +261,18 @@ namespace PgpCore
 
             bool verified;
 
-            using (MemoryStream outStream = new MemoryStream())
+            using (var outStream = new MemoryStream())
             {
-                using (ArmoredInputStream armoredInputStream = new ArmoredInputStream(inputStream))
+                using (var armoredInputStream = new ArmoredInputStream(inputStream))
                 {
-                    MemoryStream lineOut = new MemoryStream();
-                    byte[] lineSep = LineSeparator;
-                    int lookAhead = ReadInputLine(lineOut, armoredInputStream);
+                    var lineOut = new MemoryStream();
+                    var lineSep = _lineSeparator;
+                    var lookAhead = ReadInputLine(lineOut, armoredInputStream);
 
                     // Read past message to signature and store message in stream
                     if (lookAhead != -1 && armoredInputStream.IsClearText())
                     {
-                        byte[] line = lineOut.ToArray();
+                        var line = lineOut.ToArray();
                         outStream.Write(line, 0, GetLengthWithoutSeparatorOrTrailingWhitespace(line));
                         outStream.Write(lineSep, 0, lineSep.Length);
 
@@ -277,14 +286,14 @@ namespace PgpCore
                     }
                     else if (lookAhead != -1)
                     {
-                        byte[] line = lineOut.ToArray();
+                        var line = lineOut.ToArray();
                         outStream.Write(line, 0, GetLengthWithoutSeparatorOrTrailingWhitespace(line));
                     }
 
                     // Get public key from correctly positioned stream and initialise for verification
-                    PgpObjectFactory pgpObjectFactory = new PgpObjectFactory(armoredInputStream);
-                    PgpSignatureList pgpSignatureList = (PgpSignatureList)pgpObjectFactory.NextPgpObject();
-                    PgpSignature pgpSignature = pgpSignatureList[0];
+                    var pgpObjectFactory = new PgpObjectFactory(armoredInputStream);
+                    var pgpSignatureList = (PgpSignatureList) pgpObjectFactory.NextPgpObject();
+                    var pgpSignature = pgpSignatureList[0];
 
                     pgpSignature.InitVerify(EncryptionKeys.VerificationKeys.First());
 
@@ -298,8 +307,8 @@ namespace PgpCore
                     {
                         lookAhead = ReadInputLine(lineOut, lookAhead, outStream);
 
-                        pgpSignature.Update((byte)'\r');
-                        pgpSignature.Update((byte)'\n');
+                        pgpSignature.Update((byte) '\r');
+                        pgpSignature.Update((byte) '\n');
 
                         ProcessLine(pgpSignature, lineOut.ToArray());
                     }
@@ -324,8 +333,10 @@ namespace PgpCore
         /// <param name="input">Clear signed string to be verified</param>
         public bool VerifyClear(string input)
         {
-            using (Stream inputStream = input.GetStream())
-                return VerifyClear(inputStream, null);
+            using (var inputStream = input.GetStream())
+            {
+                return VerifyClear(inputStream);
+            }
         }
 
         /// <summary>
@@ -335,10 +346,10 @@ namespace PgpCore
         /// <param name="output">String to write the decrypted data to</param>
         public bool VerifyClear(string input, string output)
         {
-            using (Stream inputStream = input.GetStream())
+            using (var inputStream = input.GetStream())
             using (Stream outputStream = new MemoryStream())
             {
-                bool verified = VerifyClear(inputStream, outputStream);
+                var verified = VerifyClear(inputStream, outputStream);
 
                 outputStream.Seek(0, SeekOrigin.Begin);
                 output = outputStream.GetString();
@@ -346,23 +357,34 @@ namespace PgpCore
             }
         }
 
-        public bool VerifyClearFile(FileInfo inputFile) => VerifyClear(inputFile, null);
+        public bool VerifyClearFile(FileInfo inputFile)
+        {
+            return VerifyClear(inputFile);
+        }
 
-        public bool VerifyClearStream(Stream inputStream) => VerifyClear(inputStream, null);
+        public bool VerifyClearStream(Stream inputStream)
+        {
+            return VerifyClear(inputStream);
+        }
 
-        public bool VerifyClearArmoredString(string input) => VerifyClear(input);
+        public bool VerifyClearArmoredString(string input)
+        {
+            return VerifyClear(input);
+        }
 
         public VerificationResult VerifyAndReadClearFile(FileInfo inputFile)
         {
             using (Stream inputStream = inputFile.OpenRead())
+            {
                 return VerifyAndReadClearStream(inputStream);
+            }
         }
 
         public VerificationResult VerifyAndReadClearStream(Stream inputStream)
         {
             using (Stream outputStream = new MemoryStream())
             {
-                bool verified = VerifyClear(inputStream, outputStream);
+                var verified = VerifyClear(inputStream, outputStream);
                 outputStream.Position = 0;
 
                 return new VerificationResult(verified, outputStream.GetString());
@@ -371,8 +393,10 @@ namespace PgpCore
 
         public VerificationResult VerifyAndReadClearArmoredString(string input)
         {
-            using (Stream inputStream = input.GetStream())
+            using (var inputStream = input.GetStream())
+            {
                 return VerifyAndReadClearStream(inputStream);
+            }
         }
 
         #endregion VerifyClear

@@ -4,7 +4,6 @@ using Xunit;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using System.IO;
 using System;
-using System.Collections.Generic;
 using Org.BouncyCastle.Bcpg;
 
 namespace PgpCore.Tests.UnitTests.GenerateKey
@@ -17,7 +16,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Arrange
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange();
-            PGP pgp = new PGP();
+            Pgp pgp = new Pgp();
 
             // Act
             pgp.GenerateKey(
@@ -38,7 +37,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Assert public key properties
             using (new AssertionScope())
             {
-                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().Contain(VERSION);
+                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().Contain(Version);
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
@@ -58,7 +57,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Assert private key properties
             using (new AssertionScope())
             {
-                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().Contain(VERSION);
+                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().Contain(Version);
 
                 using (Stream privateKeyStream = testFactory.PrivateKeyFileInfo.OpenRead())
                 {
@@ -86,7 +85,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Arrange
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange();
-            PGP pgp = new PGP();
+            Pgp pgp = new Pgp();
 
             // Act
             pgp.GenerateKey(
@@ -108,7 +107,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Assert public key properties
             using (new AssertionScope())
             {
-                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().Contain(VERSION);
+                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().Contain(Version);
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
@@ -127,7 +126,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Assert private key properties
             using (new AssertionScope())
             {
-                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().Contain(VERSION);
+                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().Contain(Version);
 
                 using (Stream privateKeyStream = testFactory.PrivateKeyFileInfo.OpenRead())
                 {
@@ -155,7 +154,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Arrange
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange();
-            PGP pgp = new PGP();
+            Pgp pgp = new Pgp();
 
             // Act
             pgp.GenerateKey(
@@ -177,7 +176,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Assert public key properties
             using (new AssertionScope())
             {
-                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().NotContain(VERSION);
+                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().NotContain(Version);
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
@@ -197,7 +196,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Assert private key properties
             using (new AssertionScope())
             {
-                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().NotContain(VERSION);
+                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().NotContain(Version);
 
                 using (Stream privateKeyStream = testFactory.PrivateKeyFileInfo.OpenRead())
                 {
@@ -225,7 +224,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Arrange
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange();
-            PGP pgp = new PGP();
+            Pgp pgp = new Pgp();
 
             // Act
             pgp.GenerateKey(
@@ -247,7 +246,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Assert public key properties
             using (new AssertionScope())
             {
-                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().Contain(VERSION);
+                File.ReadAllText(testFactory.PublicKeyFileInfo.FullName).Should().Contain(Version);
 
                 using (Stream publicKeyStream = testFactory.PublicKeyFileInfo.OpenRead())
                 {
@@ -268,7 +267,7 @@ namespace PgpCore.Tests.UnitTests.GenerateKey
             // Assert private key properties
             using (new AssertionScope())
             {
-                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().Contain(VERSION);
+                File.ReadAllText(testFactory.PrivateKeyFileInfo.FullName).Should().Contain(Version);
 
                 using (Stream privateKeyStream = testFactory.PrivateKeyFileInfo.OpenRead())
                 {

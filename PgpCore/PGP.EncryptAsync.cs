@@ -4,16 +4,14 @@ using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using PgpCore.Helpers;
-using PgpCore.Models;
 using PgpCore.Abstractions;
 using PgpCore.Extensions;
 
 namespace PgpCore
 {
-    public partial class PGP : IEncryptAsync
+    public partial class Pgp : IEncryptAsync
     {
         #region EncryptAsync
 
@@ -49,9 +47,11 @@ namespace PgpCore
             if (!inputFile.Exists)
                 throw new FileNotFoundException($"Input file [{inputFile.FullName}] does not exist.");
 
-            using (FileStream inputStream = inputFile.OpenRead())
+            using (var inputStream = inputFile.OpenRead())
             using (Stream outputStream = outputFile.OpenWrite())
+            {
                 await EncryptAsync(inputStream, outputStream, armor, withIntegrityCheck, name, headers, oldFormat);
+            }
         }
 
         /// <summary>
@@ -82,45 +82,37 @@ namespace PgpCore
             if (string.IsNullOrEmpty(name) && inputStream is FileStream fileStream)
                 name = Path.GetFileName(fileStream.Name);
             else if (string.IsNullOrEmpty(name))
-                name = DefaultFileName;
+                name = _defaultFileName;
             if (headers == null)
                 headers = new Dictionary<string, string>();
             if (inputStream.Position != 0)
                 throw new ArgumentException("inputStream should be at start of stream");
 
-            if (armor)
-            {
-                outputStream = new ArmoredOutputStream(outputStream, headers);
-            }
+            if (armor) outputStream = new ArmoredOutputStream(outputStream, headers);
 
-            PgpEncryptedDataGenerator pk =
+            var pk =
                 new PgpEncryptedDataGenerator(SymmetricKeyAlgorithm, withIntegrityCheck, new SecureRandom());
-            foreach (PgpPublicKeyRingWithPreferredKey publicKeyRing in EncryptionKeys.PublicKeyRings)
+            foreach (var publicKeyRing in EncryptionKeys.PublicKeyRings)
             {
-                PgpPublicKey publicKey = publicKeyRing.PreferredEncryptionKey ?? publicKeyRing.DefaultEncryptionKey;
+                var publicKey = publicKeyRing.PreferredEncryptionKey ?? publicKeyRing.DefaultEncryptionKey;
                 pk.AddMethod(publicKey);
             }
 
             if (CompressionAlgorithm != CompressionAlgorithmTag.Uncompressed)
-            {
-                using (Stream @out = pk.Open(outputStream, new byte[1 << 16]))
-                using (Stream compressedStream = new PgpCompressedDataGenerator(CompressionAlgorithm).Open(@out, new byte[1 << 16]))
+                using (var @out = pk.Open(outputStream, new byte[1 << 16]))
+                using (var compressedStream =
+                       new PgpCompressedDataGenerator(CompressionAlgorithm).Open(@out, new byte[1 << 16]))
                 {
-                    await Utilities.WriteStreamToLiteralDataAsync(compressedStream, FileTypeToChar(), inputStream, name, oldFormat);
+                    await Utilities.WriteStreamToLiteralDataAsync(compressedStream, FileTypeToChar(), inputStream, name,
+                        oldFormat);
                 }
-            }
             else
-            {
-                using (Stream @out = pk.Open(outputStream, new byte[1 << 16]))
+                using (var @out = pk.Open(outputStream, new byte[1 << 16]))
                 {
                     await Utilities.WriteStreamToLiteralDataAsync(@out, FileTypeToChar(), inputStream, name, oldFormat);
                 }
-            }
 
-            if (armor)
-            {
-                outputStream.Close();
-            }
+            if (armor) outputStream.Close();
         }
 
         /// <summary>
@@ -139,11 +131,11 @@ namespace PgpCore
             bool oldFormat = false)
         {
             if (string.IsNullOrEmpty(name))
-                name = DefaultFileName;
+                name = _defaultFileName;
             if (headers == null)
                 headers = new Dictionary<string, string>();
 
-            using (Stream inputStream = await input.GetStreamAsync())
+            using (var inputStream = await input.GetStreamAsync())
             using (Stream outputStream = new MemoryStream())
             {
                 await EncryptAsync(inputStream, outputStream, true, withIntegrityCheck, name, headers, oldFormat);
@@ -152,11 +144,25 @@ namespace PgpCore
             }
         }
 
-        public async Task EncryptFileAsync(FileInfo inputFile, FileInfo outputFile, bool armor = true, bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => await EncryptAsync(inputFile, outputFile, armor, withIntegrityCheck, name, headers, oldFormat);
+        public async Task EncryptFileAsync(FileInfo inputFile, FileInfo outputFile, bool armor = true,
+            bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null,
+            bool oldFormat = false)
+        {
+            await EncryptAsync(inputFile, outputFile, armor, withIntegrityCheck, name, headers, oldFormat);
+        }
 
-        public async Task EncryptStreamAsync(Stream inputStream, Stream outputStream, bool armor = true, bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => await EncryptAsync(inputStream, outputStream, armor, withIntegrityCheck, name, headers, oldFormat);
+        public async Task EncryptStreamAsync(Stream inputStream, Stream outputStream, bool armor = true,
+            bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null,
+            bool oldFormat = false)
+        {
+            await EncryptAsync(inputStream, outputStream, armor, withIntegrityCheck, name, headers, oldFormat);
+        }
 
-        public async Task<string> EncryptArmoredStringAsync(string input, bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => await EncryptAsync(input, withIntegrityCheck, name, headers, oldFormat);
+        public async Task<string> EncryptArmoredStringAsync(string input, bool withIntegrityCheck = true,
+            string name = null, IDictionary<string, string> headers = null, bool oldFormat = false)
+        {
+            return await EncryptAsync(input, withIntegrityCheck, name, headers, oldFormat);
+        }
 
         #endregion EncryptAsync
 
@@ -199,12 +205,10 @@ namespace PgpCore
             using (Stream outputStream = outputFile.OpenWrite())
             {
                 if (armor)
-                {
-                    using (ArmoredOutputStream armoredOutputStream = new ArmoredOutputStream(outputStream, headers))
+                    using (var armoredOutputStream = new ArmoredOutputStream(outputStream, headers))
                     {
                         await OutputEncryptedAsync(inputFile, armoredOutputStream, withIntegrityCheck, name, oldFormat);
                     }
-                }
                 else
                     await OutputEncryptedAsync(inputFile, outputStream, withIntegrityCheck, name, oldFormat);
             }
@@ -241,17 +245,15 @@ namespace PgpCore
             if (string.IsNullOrEmpty(name) && inputStream is FileStream fileStream)
                 name = Path.GetFileName(fileStream.Name);
             else if (string.IsNullOrEmpty(name))
-                name = DefaultFileName;
+                name = _defaultFileName;
             if (headers == null)
                 headers = new Dictionary<string, string>();
 
             if (armor)
-            {
                 using (var armoredOutputStream = new ArmoredOutputStream(outputStream, headers))
                 {
                     await OutputEncryptedAsync(inputStream, armoredOutputStream, withIntegrityCheck, name, oldFormat);
                 }
-            }
             else
                 await OutputEncryptedAsync(inputStream, outputStream, withIntegrityCheck, name, oldFormat);
         }
@@ -273,24 +275,39 @@ namespace PgpCore
             bool oldFormat = false)
         {
             if (string.IsNullOrEmpty(name))
-                name = DefaultFileName;
+                name = _defaultFileName;
             if (headers == null)
                 headers = new Dictionary<string, string>();
 
-            using (Stream inputStream = await input.GetStreamAsync())
+            using (var inputStream = await input.GetStreamAsync())
             using (Stream outputStream = new MemoryStream())
             {
-                await EncryptAndSignAsync(inputStream, outputStream, true, withIntegrityCheck, name, headers, oldFormat);
+                await EncryptAndSignAsync(inputStream, outputStream, true, withIntegrityCheck, name, headers,
+                    oldFormat);
                 outputStream.Seek(0, SeekOrigin.Begin);
                 return await outputStream.GetStringAsync();
             }
         }
 
-        public async Task EncryptFileAndSignAsync(FileInfo inputFile, FileInfo outputFile, bool armor = true, bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => await EncryptAndSignAsync(inputFile, outputFile, armor, withIntegrityCheck, name, headers, oldFormat);
+        public async Task EncryptFileAndSignAsync(FileInfo inputFile, FileInfo outputFile, bool armor = true,
+            bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null,
+            bool oldFormat = false)
+        {
+            await EncryptAndSignAsync(inputFile, outputFile, armor, withIntegrityCheck, name, headers, oldFormat);
+        }
 
-        public async Task EncryptStreamAndSignAsync(Stream inputStream, Stream outputStream, bool armor = true, bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => await EncryptAndSignAsync(inputStream, outputStream, armor, withIntegrityCheck, name, headers, oldFormat);
+        public async Task EncryptStreamAndSignAsync(Stream inputStream, Stream outputStream, bool armor = true,
+            bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null,
+            bool oldFormat = false)
+        {
+            await EncryptAndSignAsync(inputStream, outputStream, armor, withIntegrityCheck, name, headers, oldFormat);
+        }
 
-        public async Task<string> EncryptArmoredStringAndSignAsync(string input, bool withIntegrityCheck = true, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => await EncryptAndSignAsync(input, withIntegrityCheck, name, headers, oldFormat);
+        public async Task<string> EncryptArmoredStringAndSignAsync(string input, bool withIntegrityCheck = true,
+            string name = null, IDictionary<string, string> headers = null, bool oldFormat = false)
+        {
+            return await EncryptAndSignAsync(input, withIntegrityCheck, name, headers, oldFormat);
+        }
 
         #endregion EncryptAndSignAsync
     }

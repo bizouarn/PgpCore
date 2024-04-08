@@ -1,7 +1,5 @@
 ﻿using Org.BouncyCastle.Bcpg;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PgpCore.Models
 {
@@ -15,7 +13,7 @@ namespace PgpCore.Models
             SymmetricKeyAlgorithmTag symmetricKeyAlgorithm,
             string fileName,
             DateTime modificationDateTime
-            )
+        )
         {
             IsCompressed = isCompressed;
             IsEncrypted = isEncrypted;

@@ -1,14 +1,10 @@
 ﻿using FluentAssertions.Execution;
 using FluentAssertions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using PgpCore.Models;
 using System.IO;
-using System.Xml.Linq;
 
 namespace PgpCore.Tests.UnitTests.Encrypt
 {
@@ -24,7 +20,7 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream, testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -39,10 +35,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeFalse();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(VERSION);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Version);
             }
 
             // Teardown
@@ -59,7 +55,7 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream, testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -92,7 +88,7 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream, testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -107,10 +103,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeFalse();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeFalse();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(VERSION);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Version);
             }
 
             // Teardown
@@ -127,11 +123,11 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream, testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
-                pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, name: TESTNAME);
+                pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, name: Testname);
 
             // Assert
             using (new AssertionScope())
@@ -142,10 +138,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeFalse();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(TESTNAME);
+                pgpInspectResult.FileName.Should().Be(Testname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(VERSION);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Version);
             }
 
             // Teardown
@@ -162,11 +158,11 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream, testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
-                pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, headers: new Dictionary<string, string> { { TESTHEADERKEY, TESTHEADERVALUE } });
+                pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, headers: new Dictionary<string, string> { { Testheaderkey, Testheadervalue } });
 
             // Assert
             using (new AssertionScope())
@@ -177,12 +173,12 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeFalse();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(2);
                 pgpInspectResult.MessageHeaders.First().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.First().Value.Should().Be(VERSION);
-                pgpInspectResult.MessageHeaders.Last().Key.Should().Be(TESTHEADERKEY);
-                pgpInspectResult.MessageHeaders.Last().Value.Should().Be(TESTHEADERVALUE);
+                pgpInspectResult.MessageHeaders.First().Value.Should().Be(Version);
+                pgpInspectResult.MessageHeaders.Last().Key.Should().Be(Testheaderkey);
+                pgpInspectResult.MessageHeaders.Last().Value.Should().Be(Testheadervalue);
             }
 
             // Teardown
@@ -199,11 +195,11 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream, testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
-                pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, headers: new Dictionary<string, string> { { "Version", TESTHEADERVALUE } });
+                pgpEncrypt.Encrypt(testFactory.ContentStream, outputFileStream, headers: new Dictionary<string, string> { { "Version", Testheadervalue } });
 
             // Assert
             using (new AssertionScope())
@@ -214,10 +210,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeFalse();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(TESTHEADERVALUE);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Testheadervalue);
             }
 
             // Teardown
@@ -234,7 +230,7 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             TestFactory testFactory = new TestFactory();
             testFactory.Arrange(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream, testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -249,10 +245,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeFalse();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(VERSION);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Version);
             }
 
             // Teardown
@@ -273,8 +269,8 @@ namespace PgpCore.Tests.UnitTests.Encrypt
 
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactoryEncrypt.PublicKeyFileInfo, testFactorySign.PrivateKeyFileInfo, testFactorySign.Password);
             EncryptionKeys inspectionKeys = new EncryptionKeys(testFactoryEncrypt.PrivateKeyFileInfo, testFactoryEncrypt.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpInspect = new PGP(inspectionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpInspect = new Pgp(inspectionKeys);
 
             // Act
             using (Stream outputFileStream = testFactoryEncrypt.EncryptedContentFileInfo.Create())
@@ -289,10 +285,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeTrue();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(VERSION);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Version);
             }
 
             // Teardown
@@ -313,8 +309,8 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             testFactorySign.Arrange(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactoryEncrypt.PublicKeyFileInfo, testFactorySign.PrivateKeyFileInfo, testFactorySign.Password);
             EncryptionKeys inspectionKeys = new EncryptionKeys(testFactoryEncrypt.PrivateKeyFileInfo, testFactoryEncrypt.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpInspect = new PGP(inspectionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpInspect = new Pgp(inspectionKeys);
 
             // Act
             using (Stream outputFileStream = testFactoryEncrypt.EncryptedContentFileInfo.Create())
@@ -351,8 +347,8 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             testFactorySign.Arrange(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactoryEncrypt.PublicKeyFileInfo, testFactorySign.PrivateKeyFileInfo, testFactorySign.Password);
             EncryptionKeys inspectionKeys = new EncryptionKeys(testFactoryEncrypt.PrivateKeyFileInfo, testFactoryEncrypt.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpInspect = new PGP(inspectionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpInspect = new Pgp(inspectionKeys);
 
             // Act
             using (Stream outputFileStream = testFactoryEncrypt.EncryptedContentFileInfo.Create())
@@ -367,10 +363,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeTrue();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeFalse();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(VERSION);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Version);
             }
 
             // Teardown
@@ -391,12 +387,12 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             testFactorySign.Arrange(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactoryEncrypt.PublicKeyFileInfo, testFactorySign.PrivateKeyFileInfo, testFactorySign.Password);
             EncryptionKeys inspectionKeys = new EncryptionKeys(testFactoryEncrypt.PrivateKeyFileInfo, testFactoryEncrypt.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpInspect = new PGP(inspectionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpInspect = new Pgp(inspectionKeys);
 
             // Act
             using (Stream outputFileStream = testFactoryEncrypt.EncryptedContentFileInfo.Create())
-                pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentStream, outputFileStream, name: TESTNAME);
+                pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentStream, outputFileStream, name: Testname);
 
             // Assert
             using (new AssertionScope())
@@ -407,10 +403,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeTrue();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(TESTNAME);
+                pgpInspectResult.FileName.Should().Be(Testname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(VERSION);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Version);
             }
 
             // Teardown
@@ -431,12 +427,12 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             testFactorySign.Arrange(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactoryEncrypt.PublicKeyFileInfo, testFactorySign.PrivateKeyFileInfo, testFactorySign.Password);
             EncryptionKeys inspectionKeys = new EncryptionKeys(testFactoryEncrypt.PrivateKeyFileInfo, testFactoryEncrypt.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpInspect = new PGP(inspectionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpInspect = new Pgp(inspectionKeys);
 
             // Act
             using (Stream outputFileStream = testFactoryEncrypt.EncryptedContentFileInfo.Create())
-                pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentStream, outputFileStream, headers: new Dictionary<string, string> { { TESTHEADERKEY, TESTHEADERVALUE } });
+                pgpEncrypt.EncryptAndSign(testFactoryEncrypt.ContentStream, outputFileStream, headers: new Dictionary<string, string> { { Testheaderkey, Testheadervalue } });
 
             // Assert
             using (new AssertionScope())
@@ -447,12 +443,12 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeTrue();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(2);
                 pgpInspectResult.MessageHeaders.First().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.First().Value.Should().Be(VERSION);
-                pgpInspectResult.MessageHeaders.Last().Key.Should().Be(TESTHEADERKEY);
-                pgpInspectResult.MessageHeaders.Last().Value.Should().Be(TESTHEADERVALUE);
+                pgpInspectResult.MessageHeaders.First().Value.Should().Be(Version);
+                pgpInspectResult.MessageHeaders.Last().Key.Should().Be(Testheaderkey);
+                pgpInspectResult.MessageHeaders.Last().Value.Should().Be(Testheadervalue);
             }
 
             // Teardown
@@ -473,8 +469,8 @@ namespace PgpCore.Tests.UnitTests.Encrypt
             testFactorySign.Arrange(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactoryEncrypt.PublicKeyFileInfo, testFactorySign.PrivateKeyFileInfo, testFactorySign.Password);
             EncryptionKeys inspectionKeys = new EncryptionKeys(testFactoryEncrypt.PrivateKeyFileInfo, testFactoryEncrypt.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpInspect = new PGP(inspectionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpInspect = new Pgp(inspectionKeys);
 
             // Act
             using (Stream outputFileStream = testFactoryEncrypt.EncryptedContentFileInfo.Create())
@@ -489,10 +485,10 @@ namespace PgpCore.Tests.UnitTests.Encrypt
                 pgpInspectResult.IsSigned.Should().BeTrue();
                 pgpInspectResult.IsArmored.Should().BeTrue();
                 pgpInspectResult.IsIntegrityProtected.Should().BeTrue();
-                pgpInspectResult.FileName.Should().Be(DEFAULTNAME);
+                pgpInspectResult.FileName.Should().Be(Defaultname);
                 pgpInspectResult.MessageHeaders.Should().HaveCount(1);
                 pgpInspectResult.MessageHeaders.Single().Key.Should().Be("Version");
-                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(VERSION);
+                pgpInspectResult.MessageHeaders.Single().Value.Should().Be(Version);
             }
 
             // Teardown

@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PgpCore.Extensions
@@ -19,17 +17,6 @@ namespace PgpCore.Extensions
             var reader = new StreamReader(inputStream);
             var output = await reader.ReadToEndAsync();
             return output;
-        }
-
-        internal static Encoding GetEncoding(this Stream inputStream)
-        {
-            Encoding defaultEncodingIfNoBom = Encoding.UTF8;
-
-            using (var reader = new StreamReader(inputStream, defaultEncodingIfNoBom, true, 1024, true))
-            {
-                reader.Peek();
-                return reader.CurrentEncoding;
-            }
         }
     }
 }

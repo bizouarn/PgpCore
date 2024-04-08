@@ -1,15 +1,13 @@
 using Org.BouncyCastle.Bcpg;
 using PgpCore.Abstractions;
 using PgpCore.Extensions;
-using PgpCore.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace PgpCore
 {
-    public partial class PGP : ISignSync
+    public partial class Pgp : ISignSync
     {
         #region Sign
 
@@ -47,12 +45,10 @@ namespace PgpCore
             using (Stream outputStream = outputFile.OpenWrite())
             {
                 if (armor)
-                {
-                    using (ArmoredOutputStream armoredOutputStream = new ArmoredOutputStream(outputStream, headers))
+                    using (var armoredOutputStream = new ArmoredOutputStream(outputStream, headers))
                     {
                         OutputSigned(inputFile, armoredOutputStream, name, oldFormat);
                     }
-                }
                 else
                     OutputSigned(inputFile, outputStream, name, oldFormat);
             }
@@ -86,17 +82,15 @@ namespace PgpCore
             if (string.IsNullOrEmpty(name) && inputStream is FileStream fileStream)
                 name = Path.GetFileName(fileStream.Name);
             else if (string.IsNullOrEmpty(name))
-                name = DefaultFileName;
+                name = _defaultFileName;
             if (headers == null)
                 headers = new Dictionary<string, string>();
 
             if (armor)
-            {
-                using (ArmoredOutputStream armoredOutputStream = new ArmoredOutputStream(outputStream, headers))
+                using (var armoredOutputStream = new ArmoredOutputStream(outputStream, headers))
                 {
                     OutputSigned(inputStream, armoredOutputStream, name, oldFormat);
                 }
-            }
             else
                 OutputSigned(inputStream, outputStream, name, oldFormat);
         }
@@ -115,11 +109,11 @@ namespace PgpCore
             bool oldFormat = false)
         {
             if (string.IsNullOrEmpty(name))
-                name = DefaultFileName;
+                name = _defaultFileName;
             if (headers == null)
                 headers = new Dictionary<string, string>();
 
-            using (Stream inputStream = input.GetStream())
+            using (var inputStream = input.GetStream())
             using (Stream outputStream = new MemoryStream())
             {
                 Sign(inputStream, outputStream, true, name, headers, oldFormat);
@@ -128,11 +122,23 @@ namespace PgpCore
             }
         }
 
-        public void SignFile(FileInfo inputFile, FileInfo outputFile, bool armor = true, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => Sign(inputFile, outputFile, armor, name, headers, oldFormat);
+        public void SignFile(FileInfo inputFile, FileInfo outputFile, bool armor = true, string name = null,
+            IDictionary<string, string> headers = null, bool oldFormat = false)
+        {
+            Sign(inputFile, outputFile, armor, name, headers, oldFormat);
+        }
 
-        public void SignStream(Stream inputStream, Stream outputStream, bool armor = true, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => Sign(inputStream, outputStream, armor, name, headers, oldFormat);
+        public void SignStream(Stream inputStream, Stream outputStream, bool armor = true, string name = null,
+            IDictionary<string, string> headers = null, bool oldFormat = false)
+        {
+            Sign(inputStream, outputStream, armor, name, headers, oldFormat);
+        }
 
-        public string SignArmoredString(string input, string name = null, IDictionary<string, string> headers = null, bool oldFormat = false) => Sign(input, name, headers, oldFormat);
+        public string SignArmoredString(string input, string name = null, IDictionary<string, string> headers = null,
+            bool oldFormat = false)
+        {
+            return Sign(input, name, headers, oldFormat);
+        }
 
         #endregion Sign
 
@@ -204,7 +210,7 @@ namespace PgpCore
             if (headers == null)
                 headers = new Dictionary<string, string>();
 
-            using (Stream inputStream = input.GetStream())
+            using (var inputStream = input.GetStream())
             using (Stream outputStream = new MemoryStream())
             {
                 ClearSign(inputStream, outputStream, headers);
@@ -213,11 +219,20 @@ namespace PgpCore
             }
         }
 
-        public void ClearSignFile(FileInfo inputFile, FileInfo outputFile, IDictionary<string, string> headers = null) => ClearSign(inputFile, outputFile, headers);
+        public void ClearSignFile(FileInfo inputFile, FileInfo outputFile, IDictionary<string, string> headers = null)
+        {
+            ClearSign(inputFile, outputFile, headers);
+        }
 
-        public void ClearSignStream(Stream inputStream, Stream outputStream, IDictionary<string, string> headers = null) => ClearSign(inputStream, outputStream, headers);
+        public void ClearSignStream(Stream inputStream, Stream outputStream, IDictionary<string, string> headers = null)
+        {
+            ClearSign(inputStream, outputStream, headers);
+        }
 
-        public string ClearSignArmoredString(string input, IDictionary<string, string> headers = null) => ClearSign(input, headers);
+        public string ClearSignArmoredString(string input, IDictionary<string, string> headers = null)
+        {
+            return ClearSign(input, headers);
+        }
 
         #endregion ClearSign
     }

@@ -1,9 +1,6 @@
-﻿using Org.BouncyCastle.Bcpg;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PgpCore.Tests
@@ -24,55 +21,55 @@ namespace PgpCore.Tests
             _uniqueIdentifier = uniqueIdentifier;
         }
 
-        public string ContentDirectory => $"{Constants.CONTENTBASEDIRECTORY}{_uniqueIdentifier}/";
+        public string ContentDirectory => $"{Constants.Contentbasedirectory}{_uniqueIdentifier}/";
 
-        public string KeyDirectory => $"{Constants.KEYBASEDIRECTORY}{_uniqueIdentifier}/";
+        public string KeyDirectory => $"{Constants.Keybasedirectory}{_uniqueIdentifier}/";
 
-        public string Content => Constants.CONTENT;
+        public string Content => Constants.Content;
 
-        private string ContentFilePath => $"{ContentDirectory}{Constants.CONTENTFILENAME}";
+        private string _contentFilePath => $"{ContentDirectory}{Constants.Contentfilename}";
 
-        public FileInfo ContentFileInfo => new FileInfo(ContentFilePath);
+        public FileInfo ContentFileInfo => new FileInfo(_contentFilePath);
 
         public Stream ContentStream => GetFileStream(ContentFileInfo);
 
-        private string EncryptedContentFilePath => $"{ContentDirectory}{Constants.ENCRYPTEDCONTENTFILENAME}";
+        private string _encryptedContentFilePath => $"{ContentDirectory}{Constants.Encryptedcontentfilename}";
 
-        public FileInfo EncryptedContentFileInfo => new FileInfo(EncryptedContentFilePath);
+        public FileInfo EncryptedContentFileInfo => new FileInfo(_encryptedContentFilePath);
 
-        public string EncryptedContent => File.ReadAllText(EncryptedContentFilePath);
+        public string EncryptedContent => File.ReadAllText(_encryptedContentFilePath);
 
         public Stream EncryptedContentStream => GetFileStream(EncryptedContentFileInfo);
 
-        private string SignedContentFilePath => $"{ContentDirectory}{Constants.SIGNEDCONTENTFILENAME}";
+        private string _signedContentFilePath => $"{ContentDirectory}{Constants.Signedcontentfilename}";
 
-        public FileInfo SignedContentFileInfo => new FileInfo(SignedContentFilePath);
+        public FileInfo SignedContentFileInfo => new FileInfo(_signedContentFilePath);
 
-        public string SignedContent => File.ReadAllText(SignedContentFilePath);
+        public string SignedContent => File.ReadAllText(_signedContentFilePath);
 
         public Stream SignedContentStream => GetFileStream(SignedContentFileInfo);
 
-        private string DecryptedContentFilePath => $"{ContentDirectory}{Constants.DECRYPTEDCONTENTFILENAME}";
+        private string _decryptedContentFilePath => $"{ContentDirectory}{Constants.Decryptedcontentfilename}";
 
-        public FileInfo DecryptedContentFileInfo => new FileInfo(DecryptedContentFilePath);
+        public FileInfo DecryptedContentFileInfo => new FileInfo(_decryptedContentFilePath);
 
-        public string DecryptedContent => File.ReadAllText(DecryptedContentFilePath);
+        public string DecryptedContent => File.ReadAllText(_decryptedContentFilePath);
 
         public Stream DecryptedContentStream => GetFileStream(DecryptedContentFileInfo);
 
-        private string PrivateKeyFilePath => $"{KeyDirectory}{Constants.PRIVATEKEYFILENAME}";
+        private string _privateKeyFilePath => $"{KeyDirectory}{Constants.Privatekeyfilename}";
 
-        public FileInfo PrivateKeyFileInfo => new FileInfo(PrivateKeyFilePath);
+        public FileInfo PrivateKeyFileInfo => new FileInfo(_privateKeyFilePath);
 
-        public string PrivateKey => File.ReadAllText(PrivateKeyFilePath);
+        public string PrivateKey => File.ReadAllText(_privateKeyFilePath);
 
         public Stream PrivateKeyStream => GetFileStream(PrivateKeyFileInfo);
 
-        private string PublicKeyFilePath => $"{KeyDirectory}{Constants.PUBLICKEYFILENAME}";
+        private string _publicKeyFilePath => $"{KeyDirectory}{Constants.Publickeyfilename}";
 
-        public FileInfo PublicKeyFileInfo => new FileInfo(PublicKeyFilePath);
+        public FileInfo PublicKeyFileInfo => new FileInfo(_publicKeyFilePath);
 
-        public string PublicKey => File.ReadAllText(PublicKeyFilePath);
+        public string PublicKey => File.ReadAllText(_publicKeyFilePath);
 
         public Stream PublicKeyStream => GetFileStream(PublicKeyFileInfo);
 
@@ -83,7 +80,7 @@ namespace PgpCore.Tests
         public void Arrange(KeyType keyType)
         {
             Arrange();
-            PGP pgp = new PGP();
+            Pgp pgp = new Pgp();
 
             // Create keys
             if (keyType == KeyType.Generated)
@@ -94,38 +91,38 @@ namespace PgpCore.Tests
             {
                 using (StreamWriter streamWriter = PublicKeyFileInfo.CreateText())
                 {
-                    streamWriter.WriteLine(Constants.PUBLICKEY1);
+                    streamWriter.WriteLine(Constants.Publickey1);
                 }
 
                 using (StreamWriter streamWriter = PrivateKeyFileInfo.CreateText())
                 {
-                    streamWriter.WriteLine(Constants.PRIVATEKEY1);
+                    streamWriter.WriteLine(Constants.Privatekey1);
                 }
 
-                _userName = Constants.USERNAME1;
-                _password = Constants.PASSWORD1;
+                _userName = Constants.Username1;
+                _password = Constants.Password1;
             }
             else if (keyType == KeyType.KnownGpg)
             {
                 using (StreamWriter streamWriter = PublicKeyFileInfo.CreateText())
                 {
-                    streamWriter.WriteLine(Constants.PUBLICGPGKEY1);
+                    streamWriter.WriteLine(Constants.Publicgpgkey1);
                 }
 
                 using (StreamWriter streamWriter = PrivateKeyFileInfo.CreateText())
                 {
-                    streamWriter.WriteLine(Constants.PRIVATEGPGKEY1);
+                    streamWriter.WriteLine(Constants.Privategpgkey1);
                 }
 
-                _userName = Constants.USERNAME1;
-                _password = Constants.PASSWORD1;
+                _userName = Constants.Username1;
+                _password = Constants.Password1;
             }
         }
 
         public async Task ArrangeAsync(KeyType keyType)
         {
             Arrange();
-            PGP pgp = new PGP();
+            Pgp pgp = new Pgp();
 
             // Create keys
             if (keyType == KeyType.Generated)
@@ -136,31 +133,31 @@ namespace PgpCore.Tests
             {
                 using (StreamWriter streamWriter = PublicKeyFileInfo.CreateText())
                 {
-                    await streamWriter.WriteLineAsync(Constants.PUBLICKEY1);
+                    await streamWriter.WriteLineAsync(Constants.Publickey1);
                 }
 
                 using (StreamWriter streamWriter = PrivateKeyFileInfo.CreateText())
                 {
-                    await streamWriter.WriteLineAsync(Constants.PRIVATEKEY1);
+                    await streamWriter.WriteLineAsync(Constants.Privatekey1);
                 }
 
-                _userName = Constants.USERNAME1;
-                _password = Constants.PASSWORD1;
+                _userName = Constants.Username1;
+                _password = Constants.Password1;
             }
             else if (keyType == KeyType.KnownGpg)
             {
                 using (StreamWriter streamWriter = PublicKeyFileInfo.CreateText())
                 {
-                    await streamWriter.WriteLineAsync(Constants.PUBLICGPGKEY1);
+                    await streamWriter.WriteLineAsync(Constants.Publicgpgkey1);
                 }
 
                 using (StreamWriter streamWriter = PrivateKeyFileInfo.CreateText())
                 {
-                    await streamWriter.WriteLineAsync(Constants.PRIVATEGPGKEY1);
+                    await streamWriter.WriteLineAsync(Constants.Privategpgkey1);
                 }
 
-                _userName = Constants.USERNAME1;
-                _password = Constants.PASSWORD1;
+                _userName = Constants.Username1;
+                _password = Constants.Password1;
             }
         }
 
@@ -173,16 +170,16 @@ namespace PgpCore.Tests
             {
                 using (StreamWriter streamWriter = ContentFileInfo.CreateText())
                 {
-                    streamWriter.Write(Constants.CONTENT);
+                    streamWriter.Write(Constants.Content);
                 }
             }
             else if (fileType == FileType.GeneratedMedium)
             {
-                CreateRandomFile(ContentFilePath, 300);
+                CreateRandomFile(_contentFilePath, 300);
             }
             else if (fileType == FileType.GeneratedLarge)
             {
-                CreateRandomFile(ContentFilePath, 5000);
+                CreateRandomFile(_contentFilePath, 5000);
             }
         }
 
@@ -195,16 +192,16 @@ namespace PgpCore.Tests
             {
                 using (StreamWriter streamWriter = ContentFileInfo.CreateText())
                 {
-                    await streamWriter.WriteAsync(Constants.CONTENT);
+                    await streamWriter.WriteAsync(Constants.Content);
                 }
             }
             else if (fileType == FileType.GeneratedMedium)
             {
-                await CreateRandomFileAsync(ContentFilePath, 300);
+                await CreateRandomFileAsync(_contentFilePath, 300);
             }
             else if (fileType == FileType.GeneratedLarge)
             {
-                await CreateRandomFileAsync(ContentFilePath, 5000);
+                await CreateRandomFileAsync(_contentFilePath, 5000);
             }
         }
 
@@ -252,7 +249,7 @@ namespace PgpCore.Tests
         {
             // Note: block size must be a factor of 1MB to avoid rounding errors
             const int blockSize = 1024 * 8;
-            const int blocksPerMb = (1024 * 1024) / blockSize;
+            const int blocksPerMb = 1024 * 1024 / blockSize;
 
             byte[] data = new byte[blockSize];
 
@@ -273,7 +270,7 @@ namespace PgpCore.Tests
         {
             // Note: block size must be a factor of 1MB to avoid rounding errors
             const int blockSize = 1024 * 8;
-            const int blocksPerMb = (1024 * 1024) / blockSize;
+            const int blocksPerMb = 1024 * 1024 / blockSize;
 
             byte[] data = new byte[blockSize];
 

@@ -8,6 +8,7 @@ namespace PgpCore.Extensions
         /// <seealso href="https://github.com/reactiveui/ReactiveUI/blob/main/src/ReactiveUI/Mixins/DisposableMixins.cs#L28">
         /// Adapted from ReactiveUI.
         /// </seealso>
+        /// <exception cref="ArgumentNullException"><paramref name="this"/> or <paramref name="disposables"/> is <see langword="null"/></exception>
         public static T DisposeWith<T>(this T @this, CompositeDisposable disposables)
             where T : IDisposable
         {

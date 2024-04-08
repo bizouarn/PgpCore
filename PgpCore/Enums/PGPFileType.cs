@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PgpCore.Enums
+﻿namespace PgpCore.Enums
 {
-    public enum PGPFileType
+    public enum PgpFileType
     {
         Binary,
         Text,
-        UTF8
+        Utf8
     }
 }

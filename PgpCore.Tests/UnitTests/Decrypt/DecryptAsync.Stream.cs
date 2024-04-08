@@ -25,8 +25,8 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -58,8 +58,8 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(keyType, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -90,11 +90,11 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys)
+            Pgp pgpEncrypt = new Pgp(encryptionKeys)
             {
                 CompressionAlgorithm = compressionAlgorithmTag
             };
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -124,11 +124,11 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys)
+            Pgp pgpEncrypt = new Pgp(encryptionKeys)
             {
                 CompressionAlgorithm = compressionAlgorithmTag
             };
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -159,11 +159,11 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys)
+            Pgp pgpEncrypt = new Pgp(encryptionKeys)
             {
                 HashAlgorithmTag = hashAlgorithmTag
             };
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -193,11 +193,11 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys)
+            Pgp pgpEncrypt = new Pgp(encryptionKeys)
             {
                 HashAlgorithmTag = hashAlgorithmTag
             };
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -228,11 +228,11 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys)
+            Pgp pgpEncrypt = new Pgp(encryptionKeys)
             {
                 SymmetricKeyAlgorithm = symmetricKeyAlgorithmTag
             };
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -266,11 +266,11 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys)
+            Pgp pgpEncrypt = new Pgp(encryptionKeys)
             {
                 SymmetricKeyAlgorithm = symmetricKeyAlgorithmTag
             };
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -304,11 +304,11 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys)
+            Pgp pgpEncrypt = new Pgp(encryptionKeys)
             {
                 SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Null
             };
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
 
@@ -334,11 +334,11 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(KeyType.Generated, FileType.Known);
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncrypt = new PGP(encryptionKeys)
+            Pgp pgpEncrypt = new Pgp(encryptionKeys)
             {
                 SymmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Safer
             };
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
 
@@ -377,8 +377,8 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             EncryptionKeys encryptionKeys = new EncryptionKeys(keys, testFactory.PrivateKeyStream, testFactory.Password);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory2.PrivateKeyStream, testFactory2.Password);
 
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -419,8 +419,8 @@ namespace PgpCore.Tests.UnitTests.Decrypt
 
             EncryptionKeys encryptionAndSigningKeys = new EncryptionKeys(testFactory.PublicKeyStream, testFactory2.PrivateKeyStream, testFactory2.Password);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpEncryptAndSign = new PGP(encryptionAndSigningKeys);
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpEncryptAndSign = new Pgp(encryptionAndSigningKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputFileStream = testFactory.EncryptedContentFileInfo.Create())
@@ -452,7 +452,7 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             await testFactory.ArrangeAsync(keyType, FileType.Known);
 
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory.PrivateKeyStream, testFactory.Password);
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
             File.WriteAllText(testFactory.ContentFileInfo.FullName, testFactory.Content);
 
             // Act
@@ -486,8 +486,8 @@ namespace PgpCore.Tests.UnitTests.Decrypt
             EncryptionKeys encryptionKeys = new EncryptionKeys(testFactory.PublicKeyStream);
             EncryptionKeys decryptionKeys = new EncryptionKeys(testFactory2.PrivateKeyStream, testFactory2.Password);
 
-            PGP pgpEncrypt = new PGP(encryptionKeys);
-            PGP pgpDecrypt = new PGP(decryptionKeys);
+            Pgp pgpEncrypt = new Pgp(encryptionKeys);
+            Pgp pgpDecrypt = new Pgp(decryptionKeys);
 
             // Act
             using (Stream outputStream = testFactory.EncryptedContentFileInfo.Create())
@@ -522,8 +522,8 @@ namespace PgpCore.Tests.UnitTests.Decrypt
 
             EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKeyStream, signTestFactory.PrivateKeyStream, signTestFactory.Password);
             EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKeyStream, encryptTestFactory.PrivateKeyStream, encryptTestFactory.Password);
-            PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
-            PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
+            Pgp pgpEncryptAndSign = new Pgp(encryptAndSignKeys);
+            Pgp pgpDecryptAndVerify = new Pgp(decryptAndVerifyKeys);
 
             // Act
             using (Stream outputFileStream = encryptTestFactory.EncryptedContentFileInfo.Create())
@@ -560,8 +560,8 @@ namespace PgpCore.Tests.UnitTests.Decrypt
 
             EncryptionKeys encryptAndSignKeys = new EncryptionKeys(encryptTestFactory.PublicKeyStream, encryptTestFactory.PrivateKeyStream, encryptTestFactory.Password);
             EncryptionKeys decryptAndVerifyKeys = new EncryptionKeys(signTestFactory.PublicKeyStream, encryptTestFactory.PrivateKeyStream, encryptTestFactory.Password);
-            PGP pgpEncryptAndSign = new PGP(encryptAndSignKeys);
-            PGP pgpDecryptAndVerify = new PGP(decryptAndVerifyKeys);
+            Pgp pgpEncryptAndSign = new Pgp(encryptAndSignKeys);
+            Pgp pgpDecryptAndVerify = new Pgp(decryptAndVerifyKeys);
 
             // Act
             using (Stream outputFileStream = encryptTestFactory.EncryptedContentFileInfo.Create())
